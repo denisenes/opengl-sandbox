@@ -1,6 +1,7 @@
 package engine
 
-import engine.renderer.{DisplayManager, RawModel, Renderer}
+import engine.models.{ModelManager, RawModel, TexturedModel}
+import engine.renderer.{DisplayManager, Renderer, Texture}
 import engine.shaders.StaticShader
 import org.lwjgl.glfw.GLFW.glfwWindowShouldClose
 
@@ -25,16 +26,18 @@ object Main:
 
         Using.Manager { use =>
             val dm     = use(DisplayManager.createDisplay())
-            val loader = use(RawModel.withLoader())
+            val loader = use(ModelManager)
             val shader = use(new StaticShader())
 
-            val model: RawModel = loader.loadToVAO(vertices, indices)
+            val model   = loader.loadRawModel(vertices, indices)
+            val texture = loader.loadTexture("metal.png")
+            val texturedModel = new TexturedModel(model, texture)
 
-            while (!glfwWindowShouldClose(dm.window)) {
+            while (!glfwWindowShouldClose(!dm.window)) {
                 // logic
                 renderer.prepare()
                 shader.start()
-                renderer.render(model)
+                renderer.render(texturedModel)
                 shader.stop()
                 dm.updateDisplay()
             }

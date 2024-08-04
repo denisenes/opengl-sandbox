@@ -1,10 +1,10 @@
 package engine.renderer
 
+import engine.GLExt.WindowH
 import org.lwjgl.*
 import org.lwjgl.glfw.*
 import org.lwjgl.opengl.*
 import org.lwjgl.system.*
-import engine.Utils.WindowHandle
 import org.lwjgl.glfw.Callbacks.*
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.system.MemoryStack.*
@@ -35,11 +35,11 @@ object DisplayManager:
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE)
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE)
 
-        val window = glfwCreateWindow(WIDTH, HEIGHT, TITLE, NULL, NULL)
-        if window == NULL then
+        val window = WindowH.create(WIDTH, HEIGHT, TITLE, NULL, NULL)
+        if !window == NULL then
             throw new RuntimeException("Failed to create GLFW window")
 
-        glfwSetKeyCallback(window,
+        glfwSetKeyCallback(!window,
             (window, key, scancode, action, mods) =>
                 if (key == GLFW_KEY_ESCAPE) glfwSetWindowShouldClose(window, true)
         )
@@ -48,39 +48,38 @@ object DisplayManager:
             val pWidth: IntBuffer = stack.mallocInt(1)
             val pHeight: IntBuffer = stack.mallocInt(1)
 
-            glfwGetWindowSize(window, pWidth, pHeight)
+            glfwGetWindowSize(!window, pWidth, pHeight)
 
             val vidmode: GLFWVidMode = glfwGetVideoMode(glfwGetPrimaryMonitor())
-            glfwSetWindowPos(window,
+            glfwSetWindowPos(!window,
                 (vidmode.width() - pWidth.get(0)) / 2, (vidmode.height() - pHeight.get(0)) / 2)
         }
 
-        glfwMakeContextCurrent(window)
+        glfwMakeContextCurrent(!window)
         glfwSwapInterval(1)
-        glfwShowWindow(window)
+        glfwShowWindow(!window)
 
         GL.createCapabilities()
         new DisplayManager(window)
 
-class DisplayManager(val window: WindowHandle) extends AutoCloseable:
+class DisplayManager(val window: WindowH) extends AutoCloseable:
 
     def updateDisplay(): Unit =
-        glfwSwapBuffers(window)
+        glfwSwapBuffers(!window)
         glfwPollEvents()
 
     def getWindowWidth(): Int =
         val w = BufferUtils.createIntBuffer(1)
-        glfwGetWindowSize(window, w, null)
+        glfwGetWindowSize(!window, w, null)
         w.get(0)
 
     def getWindowHeight(): Int =
         val h = BufferUtils.createIntBuffer(1)
-        glfwGetWindowSize(window, h, null)
+        glfwGetWindowSize(!window, h, null)
         h.get(0)
 
     private def closeDisplay(): Unit =
-        glfwFreeCallbacks(window)
-        glfwDestroyWindow(window)
+        window.destroy()
         glfwTerminate()
         glfwSetErrorCallback(null).free()
 
