@@ -78,11 +78,11 @@ object GLExt:
         glBindVertexArray(0)
 
     def GL_bindTexture(target: Int, texture: TextureH)(f: => Unit): Unit =
-        glBindTexture(GL_TEXTURE_2D, !texture)
+        glBindTexture(target, !texture)
         f
-        glBindTexture(GL_TEXTURE_2D, 0)
+        glBindTexture(target, 0)
 
     def GL_enableVertexAttribArray(attrNum: Int)(f: => Unit): Unit =
-        glEnableVertexAttribArray(0)
+        glEnableVertexAttribArray(attrNum)
         f
-        glDisableVertexAttribArray(0)
+        glDisableVertexAttribArray(attrNum)

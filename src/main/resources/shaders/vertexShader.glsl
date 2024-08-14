@@ -1,9 +1,11 @@
 #version 400 core
 
 in  vec3 position;
-out vec3 color;
+in  vec2 textCoords;
+
+out vec2 out_textCoords;
 
 void main(void) {
     gl_Position = vec4(position, 1.0);
-    color = vec3(position.x / position.y * 1.0, 0.9, position.y + 0.5);
+    out_textCoords = textCoords;
 }

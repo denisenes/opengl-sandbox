@@ -24,13 +24,20 @@ object Main:
             3, 1, 2
         )
 
+        val textureCoords: Array[Float] = Array(
+            0, 0,
+            0, 1,
+            1, 1,
+            1, 0
+        )
+
         Using.Manager { use =>
             val dm     = use(DisplayManager.createDisplay())
             val loader = use(ModelManager)
             val shader = use(new StaticShader())
 
-            val model   = loader.loadRawModel(vertices, indices)
-            val texture = loader.loadTexture("metal.png")
+            val model   = loader.loadRawModel(vertices, textureCoords, indices)
+            val texture = loader.loadTexture("ground.jpg")
             val texturedModel = new TexturedModel(model, texture)
 
             while (!glfwWindowShouldClose(!dm.window)) {

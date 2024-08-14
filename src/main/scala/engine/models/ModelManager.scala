@@ -9,11 +9,10 @@ object ModelManager extends AutoCloseable:
     private var VBOs:     List[VboH]     = List()
     private var textures: List[TextureH] = List()
 
-    def loadRawModel(positions: Array[Float], indices: Array[Int]): RawModel =
-        val model = RawModel(positions, indices)
+    def loadRawModel(positions: Array[Float], textureCoords: Array[Float], indices: Array[Int]): RawModel =
+        val model = RawModel(positions, textureCoords, indices)
         register(model.vaoId)
-        register(model.indicesVboId)
-        register(model.verticesVboId)
+        model.vboIds.foreach(vboId => register(vboId))
         model
 
     def loadTexture(filename: String): Texture =
