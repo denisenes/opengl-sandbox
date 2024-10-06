@@ -7,6 +7,8 @@ lazy val root = (project in file("."))
     name := "playground"
   )
 
+resolvers += "oss.sonatype.org" at "https://oss.sonatype.org/content/repositories/snapshots/"
+
 libraryDependencies ++= {
   val version = "3.3.4"
   val os = "linux"
@@ -23,4 +25,13 @@ libraryDependencies ++= {
       )
     }
   }
+}
+
+libraryDependencies += {
+  val version = "1.10.7"
+  "org.joml" % "joml" % version
+}
+
+libraryDependencies += {
+  "log4j" % "log4j" % "1.2.17"
 }

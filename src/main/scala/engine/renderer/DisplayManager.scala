@@ -1,6 +1,7 @@
 package engine.renderer
 
 import engine.GLExt.WindowH
+import engine.LOG
 import org.lwjgl.*
 import org.lwjgl.glfw.*
 import org.lwjgl.opengl.*
@@ -17,10 +18,10 @@ object DisplayManager:
 
     private val WIDTH  = 1280
     private val HEIGHT = 720
-    private val TITLE  = "Scala Shitty Engine"
+    private val TITLE  = ""
 
     def createDisplay(): DisplayManager =
-        println("LWJGL " + Version.getVersion)
+        LOG("LWJGL " + Version.getVersion)
 
         GLFWErrorCallback.createPrint(System.err).set()
 
@@ -37,7 +38,9 @@ object DisplayManager:
 
         val window = WindowH.create(WIDTH, HEIGHT, TITLE, NULL, NULL)
         if !window == NULL then
-            throw new RuntimeException("Failed to create GLFW window")
+            val ex = new RuntimeException("Failed to create GLFW window")
+            LOG("", ex)
+            throw ex
 
         glfwSetKeyCallback(!window,
             (window, key, scancode, action, mods) =>

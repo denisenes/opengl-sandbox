@@ -1,8 +1,10 @@
 package engine
 
-import engine.models.{ModelManager, RawModel, TexturedModel}
-import engine.renderer.{DisplayManager, Renderer, Texture}
+import engine.entities.Entity
+import engine.models.{ModelManager, TexturedModel}
+import engine.renderer.{DisplayManager, Renderer}
 import engine.shaders.StaticShader
+import org.joml.Vector3f
 import org.lwjgl.glfw.GLFW.glfwWindowShouldClose
 
 import scala.util.Using
@@ -10,8 +12,6 @@ import scala.util.Using
 object Main:
 
     private def mainLoop(): Unit =
-        val renderer: Renderer = new Renderer()
-
         val vertices: Array[Float] = Array(
             -0.5f, 0.5f, 0f,
             -0.5f, -0.5f, 0f,
@@ -32,20 +32,27 @@ object Main:
         )
 
         Using.Manager { use =>
+            LOG("Before initialization")
+
             val dm     = use(DisplayManager.createDisplay())
             val loader = use(ModelManager)
-            val shader = use(new StaticShader())
+            val shader = use(StaticShader())
+
+            val renderer = Renderer(dm, shader)
 
             val model   = loader.loadRawModel(vertices, textureCoords, indices)
             val texture = loader.loadTexture("ground.jpg")
-            val texturedModel = new TexturedModel(model, texture)
+            val texturedModel = TexturedModel(model, texture)
+
+            val entity: Entity = Entity(texturedModel, Vector3f(0, 0, -1), 0, 0, 0, 1)
+
+            LOG("Initialization complete")
 
             while (!glfwWindowShouldClose(!dm.window)) {
-                // logic
+                entity.changePosition(0, 0, -0.01)
+                entity.changeRotation(0, 1, 0.5)
                 renderer.prepare()
-                shader.start()
-                renderer.render(texturedModel)
-                shader.stop()
+                renderer.render(entity)
                 dm.updateDisplay()
             }
         }

@@ -1,6 +1,7 @@
 package engine.renderer
 
 import engine.GLExt.{GL_bindTexture, TextureH}
+import engine.LOG
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL11
 
@@ -19,6 +20,7 @@ class Texture(val filepath: String):
         image.getRGB(0, 0, width, height, res, 0, width)
 
     private def load(path: String): TextureH =
+        LOG(s"[Texture] Started loading texture from $path")
         val image = ImageIO.read(new FileInputStream(path))
         width  = image.getWidth
         height = image.getHeight
@@ -46,5 +48,5 @@ class Texture(val filepath: String):
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer)
         }
 
-        println(s"Texture from ${filepath} successfully loaded")
+        LOG(s"[Texture] Texture from ${filepath} successfully loaded")
         res
